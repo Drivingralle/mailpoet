@@ -11,6 +11,12 @@ $data = str_replace('\\Normalizer::', '\\MailPoetVendor\\Normalizer::', $data);
 $data = str_replace('use Normalizer;', 'use MailPoetVendor\\Normalizer;', $data);
 file_put_contents($file, $data);
 
+// Remove union return type from bootstrap file for PHP8 because we can't push PHP8 syntax to wp.org plugins repository
+$file = __DIR__ . '/../vendor-prefixed/symfony/polyfill-intl-idn/bootstrap80.php';
+$data = file_get_contents($file);
+$data = str_replace(' : string|false', '', $data);
+file_put_contents($file, $data);
+
 $file = __DIR__ . '/../vendor-prefixed/symfony/polyfill-intl-normalizer/Normalizer.php';
 $data = file_get_contents($file);
 $data = str_replace('\\Normalizer::', '\\MailPoetVendor\\Normalizer::', $data);

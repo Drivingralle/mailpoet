@@ -13,7 +13,7 @@
     "symfony/dependency-injection": "5.4.7",
     "symfony/polyfill-ctype": "1.18.1",
     "symfony/polyfill-iconv": "1.18.1",
-    "symfony/polyfill-intl-idn": "1.18.1",
+    "symfony/polyfill-intl-idn": "1.26.0",
     "symfony/polyfill-intl-normalizer": "1.18.1",
     "symfony/polyfill-mbstring": "1.18.1",
     "symfony/polyfill-php72": "1.23.0",
