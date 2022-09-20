@@ -17,6 +17,12 @@ $data = file_get_contents($file);
 $data = str_replace(' : string|false', '', $data);
 file_put_contents($file, $data);
 
+// Add phpcs::ignore that are used for older PHP versions and throw error in PHPCompatibility check for versions 8.0
+$file = __DIR__ . '/../vendor-prefixed/symfony/polyfill-intl-idn/bootstrap.php';
+$data = file_get_contents($file);
+$data = str_replace('\INTL_IDNA_VARIANT_2003, &$idna_info = null)', '\INTL_IDNA_VARIANT_2003, &$idna_info = null) //phpcs::ignore', $data);
+file_put_contents($file, $data);
+
 $file = __DIR__ . '/../vendor-prefixed/symfony/polyfill-intl-normalizer/Normalizer.php';
 $data = file_get_contents($file);
 $data = str_replace('\\Normalizer::', '\\MailPoetVendor\\Normalizer::', $data);
