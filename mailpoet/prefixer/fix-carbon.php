@@ -48,6 +48,15 @@ $replacements = [
       '',
     ],
   ],
+  [ // Temporarily ignore error unit it is fixed in Carbon. We can remove it after https://github.com/briannesbitt/Carbon/pull/2677 is merged
+    'file' => '../vendor-prefixed/nesbot/carbon/src/Carbon/Traits/Units.php',
+    'find' => [
+      'throw new UnitException(\'Unable to add unit \' . \var_export(\func_get_args(), \true));',
+    ],
+    'replace' => [
+      'throw new UnitException(\'Unable to add unit \' . \var_export(\func_get_args(), \true)); // phpcs::ignore',
+    ],
+  ],
 ];
 
 foreach ($replacements as $singleFile) {
