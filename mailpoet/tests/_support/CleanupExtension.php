@@ -70,6 +70,13 @@ class CleanupExtension extends Extension {
   }
 
   public function cleanupEnvironment(TestEvent $event) {
+    // Cleanup cookies
+    $wd = $this->getModule('WPWebDriver');
+    assert($wd instanceof \Codeception\Module\WebDriver);
+    $wd->webDriver->get(strval($wd->_getConfig('url')));
+    $wd->webDriver->manage()->deleteAllCookies();
+
+    // Reset DB
     $backupSql = file_get_contents(self::DB_BACKUP_PATH);
     if (!is_string($backupSql)) {
       throw new \RuntimeException('Missing or empty DB backup file: ' . self::DB_BACKUP_PATH);
@@ -79,7 +86,7 @@ class CleanupExtension extends Extension {
 
     // cleanup EntityManager for data factories that are using it
     ContainerWrapper::getInstance()->get(EntityManager::class)->clear();
-    
+
     // Without clearing the cache WordPress will think data exist that doesn't, e.g. users created in previous tests
     global $wp_object_cache;
     if ($wp_object_cache) {
