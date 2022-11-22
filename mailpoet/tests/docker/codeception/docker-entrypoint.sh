@@ -177,6 +177,9 @@ wp config set DISABLE_WP_CRON true --raw
 # activate theme
 wp theme activate twentytwentyone
 
+# add favicon.ico to avoid redirects done in PHP (was causing headers already sent issue)
+cp /wp-core/wp-includes/images/w-logo-blue-white-bg.png /wp-core/favicon.ico
+
 if [[ $CIRCLE_JOB == *"_oldest"* ]]; then
   wp theme activate twentynineteen
 fi
