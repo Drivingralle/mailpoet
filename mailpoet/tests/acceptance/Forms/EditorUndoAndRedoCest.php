@@ -38,5 +38,6 @@ class EditorUndoAndRedoCest {
     $i->click('[data-automation-id="form_undo_button"]');
     $i->waitForElementNotVisible($lastNameSelector);
     $i->waitForElementNotVisible($firstNameSelector);
+    $i->saveFormInEditor();
   }
 }

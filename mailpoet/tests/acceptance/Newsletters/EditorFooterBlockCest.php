@@ -22,5 +22,6 @@ class EditorFooterBlockCest {
     $i->click($footerSettingsIcon);
     $i->waitForElementVisible($footerSettingsAssertion);
     $i->click($footerSettingsAssertion);
+    $i->waitForText('Autosaved');
   }
 }

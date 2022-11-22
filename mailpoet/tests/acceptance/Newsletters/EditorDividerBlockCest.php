@@ -25,5 +25,6 @@ class EditorDividerBlockCest {
     $i->click($dividerSettings);
     $i->waitForElementVisible($dividerSettingsAssertion);
     $i->click('Done');
+    $i->waitForText('Autosaved');
   }
 }

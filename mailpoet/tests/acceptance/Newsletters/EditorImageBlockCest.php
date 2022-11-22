@@ -22,5 +22,6 @@ class EditorImageBlockCest {
     $i->click('Select Image');
     $i->waitForText('IMAGE');
     $i->click('Done');
+    $i->waitForText('Autosaved');
   }
 }

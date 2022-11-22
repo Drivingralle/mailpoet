@@ -267,5 +267,6 @@ class EditorProductsCest {
     $this->initializeWooCommerce($i);
     $this->filterProducts($i);
     $this->changeDisplaySettings($i);
+    $i->waitForText('Autosaved');
   }
 }

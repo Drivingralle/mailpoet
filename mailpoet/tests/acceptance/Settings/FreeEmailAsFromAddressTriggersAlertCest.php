@@ -38,5 +38,6 @@ class FreeEmailAsFromAddressTriggersAlertCest {
     $i->dontSeeElement('.sender_email_address_warning');
     $i->fillField($fromEmailField, 'alertuser@hotmail.com');
     $i->waitForElement('.sender_email_address_warning');
+    $i->click('[data-automation-id="settings-submit-button"]');
   }
 }

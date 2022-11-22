@@ -20,6 +20,7 @@ class EditorTextBlockCest {
     $i->amEditingNewsletter($newsletter->getId());
     $i->dragAndDrop('#automation_editor_block_text', '#mce_1');
     $i->waitForText('Edit this to insert text.');
+    $i->waitForText('Autosaved');
   }
 
   public function toolbarIsClosing(\AcceptanceTester $i) {

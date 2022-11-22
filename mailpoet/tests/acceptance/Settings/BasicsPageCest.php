@@ -125,5 +125,8 @@ class BasicsPageCest {
     $i->dontSeeElement('[data-acceptance-id="freemail-sender-warning-new-installation"]');
     $i->fillField($emailField, 'sender@fake.fake');
     $i->dontSeeElement('[data-acceptance-id="freemail-sender-warning-new-installation"]');
+
+    $i->click('[data-automation-id="settings-submit-button"]');
+    $i->waitForElementNotVisible('#mailpoet_loading');
   }
 }

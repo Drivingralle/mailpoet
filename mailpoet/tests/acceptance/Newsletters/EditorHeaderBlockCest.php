@@ -28,5 +28,6 @@ class EditorHeaderBlockCest {
     $i->scrollTo($headerSettingsAssertion);
     $i->waitForElementVisible($headerSettingsAssertion);
     $i->click($headerSettingsAssertion);
+    $i->waitForText('Autosaved');
   }
 }

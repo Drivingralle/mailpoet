@@ -47,6 +47,7 @@ class EditorHistoryCest {
     $i->pressKey('body', [WebDriverKeys::SHIFT, WebDriverKeys::CONTROL, 'z']);
     $i->waitForElementVisible(self::BUTTON_SELECTOR);
     $this->assessButtons($i, true, false);
+    $i->waitForText('Autosaved');
   }
 
   private function assessButtons(\AcceptanceTester $i, $undoClickable, $redoClickable) {

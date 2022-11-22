@@ -25,6 +25,8 @@ class AdvancedSettingsCest {
     $i->click($submitButton);
     $i->waitForText($successMessage);
     $i->seeCheckboxIsChecked($yesAnonymousData . ' input');
+    $i->click('[data-automation-id="settings-submit-button"]');
+    $i->waitForText('Settings saved');
   }
 
   public function toggleTaskScheduler(\AcceptanceTester $i) {
@@ -115,6 +117,8 @@ class AdvancedSettingsCest {
     $i->click($submitButton);
     $i->waitForText($successMessage);
     $i->waitForElement($chooseLogErrors);
+    $i->click('[data-automation-id="settings-submit-button"]');
+    $i->waitForText('Settings saved');
   }
 
   public function checkInactiveSubscribersAndEmails(\AcceptanceTester $i) {
@@ -136,5 +140,7 @@ class AdvancedSettingsCest {
     $i->click($trackingDisabled);
     $i->waitForElement($inactiveSubscribersDisabled);
     $i->dontSee($inactiveSubscribersEnabled);
+    $i->click('[data-automation-id="settings-submit-button"]');
+    $i->waitForText('Settings saved');
   }
 }
