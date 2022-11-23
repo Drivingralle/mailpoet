@@ -24,6 +24,7 @@ class Settings {
     $this->withCronTriggerMethod('Linux Cron');
     $this->withSendingMethodSmtpMailhog();
     $this->withSender('admin', 'wp@example.com');
+    $this->withStatsNotificationSender('wp@example.com');
     $this->withSkippedTutorials();
     $this->withCookieRevenueTracking();
     $this->withEmailNotificationsDisabled();
@@ -37,6 +38,10 @@ class Settings {
   public function withSender($name, $address) {
     $this->settings->set('sender.name', $name);
     $this->settings->set('sender.address', $address);
+  }
+
+  public function withStatsNotificationSender($address) {
+    $this->settings->set('stats_notifications.address', $address);
   }
 
   public function withEmailNotificationsDisabled() {
