@@ -74,6 +74,12 @@ class CleanupExtension extends Extension {
     $wd = $this->getModule('WPWebDriver');
     assert($wd instanceof \Codeception\Module\WebDriver);
     $wd->webDriver->get(strval($wd->_getConfig('url')));
+    try {
+      $wd->acceptPopup();
+    } catch (\Exception $e) {
+      // There is no popup in most cases, but don't have means to test it before we attempt to close it.
+      // We don't have to do anything just ignore the error.
+    }
     $wd->webDriver->manage()->deleteAllCookies();
 
     // Reset DB
