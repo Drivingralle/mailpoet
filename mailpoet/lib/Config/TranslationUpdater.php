@@ -8,7 +8,7 @@ use Tracy\Debugger;
 use Tracy\ILogger;
 
 class TranslationUpdater {
-  const API_UPDATES_BASE_URI = 'https://translate.wordpress.com/api/translations-updates/mailpoet/';
+  const API_UPDATES_BASE_URI = 'https://translate.wordpress.com/api/translations-updates/mailpoet/?test=1';
   const MAILPOET_FREE_DOT_COM_PROJECT_ID = 'MailPoet - MailPoet';
 
   /** @var WPFunctions */
