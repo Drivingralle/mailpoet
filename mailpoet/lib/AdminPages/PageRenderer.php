@@ -140,6 +140,7 @@ class PageRenderer {
       'deactivate_subscriber_after_inactive_days' => $this->settings->get('deactivate_subscriber_after_inactive_days'),
       'send_transactional_emails' => (bool)$this->settings->get('send_transactional_emails'),
       'transactional_emails_opt_in_notice_dismissed' => (bool)$this->userFlags->get('transactional_emails_opt_in_notice_dismissed'),
+      'mail_function_enabled' => function_exists('mail') && is_callable('mail'),
 
       // Premium & plan upgrade info
       'current_wp_user_email' => $this->wp->wpGetCurrentUser()->user_email,
