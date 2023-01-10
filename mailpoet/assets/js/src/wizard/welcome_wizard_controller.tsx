@@ -154,7 +154,6 @@ function WelcomeWizardStepsController({
           >
             <ErrorBoundary>
               <WelcomeWizardPitchMSSStep
-                next={() => redirect(step)}
                 subscribersCount={window.mailpoet_subscribers_count}
                 finishWizard={finishWizard}
               />
