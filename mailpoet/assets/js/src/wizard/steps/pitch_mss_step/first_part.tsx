@@ -21,6 +21,8 @@ function MSSStepFirstPart({
     MailPoet.currentWpUserEmail,
     'starter',
     {
+      ref: 'plugin-wizard',
+      utm_source: 'plugin',
       utm_medium: 'onboarding',
       utm_campaign: 'purchase',
     },
