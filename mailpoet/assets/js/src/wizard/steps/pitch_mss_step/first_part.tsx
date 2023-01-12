@@ -1,3 +1,4 @@
+import { useHistory, useParams } from 'react-router-dom';
 import { external, Icon } from '@wordpress/icons';
 import { Heading } from '../../../common/typography/heading/heading';
 import { MailPoet } from '../../../mailpoet';
@@ -8,14 +9,15 @@ import { OwnEmailServiceNote } from './own_email_service_note';
 type MSSStepFirstPartPropType = {
   subscribersCount: number;
   finishWizard: (redirect_url?: string) => void;
-  setStepPart: (newPart: string) => void;
 };
 
 function MSSStepFirstPart({
   subscribersCount,
   finishWizard,
-  setStepPart,
 }: MSSStepFirstPartPropType): JSX.Element {
+  const history = useHistory();
+  const { step } = useParams<{ step: string }>();
+
   const mailpoetAccountUrl = MailPoet.MailPoetComUrlFactory.getPurchasePlanUrl(
     MailPoet.subscribersCount,
     MailPoet.currentWpUserEmail,
@@ -61,7 +63,7 @@ function MSSStepFirstPart({
         onClick={(event) => {
           event.preventDefault();
           window.open(mailpoetAccountUrl);
-          setStepPart('second');
+          history.push(`/steps/${step}/part/2`);
         }}
         iconEnd={<Icon icon={external} />}
       >
