@@ -253,7 +253,7 @@ class Bridge {
     } else {
       $keyState = self::KEY_CHECK_ERROR;
     }
-
+    $result['data']['is_approved'] = false;
     return $this->buildKeyState(
       $keyState,
       $result

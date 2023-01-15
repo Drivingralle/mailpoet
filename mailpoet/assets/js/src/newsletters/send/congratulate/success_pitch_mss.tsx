@@ -2,11 +2,11 @@ import { useState } from 'react';
 import { MailPoet } from 'mailpoet';
 
 import { Heading } from 'common/typography/heading/heading';
+import { List } from 'common/typography/list/list';
+import { Button } from 'common';
 import { WelcomeWizardStepLayoutBody } from '../../../wizard/layout/step_layout_body.jsx';
-import { List } from '../../../common/typography/list/list';
-import { Button } from '../../../common';
 
-function FreeBenefitsList(): JSX.Element {
+function FreeBenefitsList() {
   return (
     <List>
       <li>{MailPoet.I18n.t('congratulationsMSSPitchList1')}</li>

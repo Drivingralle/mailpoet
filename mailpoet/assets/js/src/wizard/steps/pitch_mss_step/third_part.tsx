@@ -1,14 +1,9 @@
+import { MailPoet } from 'mailpoet';
+import { Button } from 'common';
 import { Heading } from '../../../common/typography/heading/heading';
-import { MailPoet } from '../../../mailpoet';
-import { Button } from '../../../common';
+import { finishWizard } from '../../finishWizard';
 
-type MSSStepThirdPartPropType = {
-  finishWizard: () => void;
-};
-
-function MSSStepThirdPart({
-  finishWizard,
-}: MSSStepThirdPartPropType): JSX.Element {
+function MSSStepThirdPart(): JSX.Element {
   return (
     <>
       <Heading level={1}>
@@ -22,7 +17,7 @@ function MSSStepThirdPart({
       <div className="mailpoet-gap" />
       <div className="mailpoet-gap" />
 
-      <Button type="button" onClick={() => finishWizard()} isFullWidth>
+      <Button type="button" onClick={finishWizard} isFullWidth>
         {MailPoet.I18n.t('welcomeWizardMSSThirdPartButton')}
       </Button>
     </>

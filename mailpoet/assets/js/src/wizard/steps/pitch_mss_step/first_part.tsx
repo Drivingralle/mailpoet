@@ -6,15 +6,7 @@ import { List } from '../../../common/typography/list/list';
 import { Button } from '../../../common';
 import { OwnEmailServiceNote } from './own_email_service_note';
 
-type MSSStepFirstPartPropType = {
-  subscribersCount: number;
-  finishWizard: (redirect_url?: string) => void;
-};
-
-function MSSStepFirstPart({
-  subscribersCount,
-  finishWizard,
-}: MSSStepFirstPartPropType): JSX.Element {
+function MSSStepFirstPart(): JSX.Element {
   const history = useHistory();
   const { step } = useParams<{ step: string }>();
 
@@ -44,7 +36,7 @@ function MSSStepFirstPart({
         <List>
           <li>{MailPoet.I18n.t('welcomeWizardMSSList1')}</li>
           <li>{MailPoet.I18n.t('welcomeWizardMSSList2')}</li>
-          {subscribersCount < 1000 ? (
+          {window.mailpoet_subscribers_count < 1000 ? (
             <li>{MailPoet.I18n.t('welcomeWizardMSSList3Free')}</li>
           ) : (
             <li>{MailPoet.I18n.t('welcomeWizardMSSList3Paid')}</li>
@@ -73,7 +65,7 @@ function MSSStepFirstPart({
       <div className="mailpoet-gap" />
       <div className="mailpoet-gap" />
 
-      <OwnEmailServiceNote finishWizard={finishWizard} />
+      <OwnEmailServiceNote />
     </>
   );
 }

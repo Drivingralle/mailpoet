@@ -1,0 +1,16 @@
+import { MailPoet } from 'mailpoet';
+
+export const updateSettings = async (data) =>
+  MailPoet.Ajax.post({
+    api_version: window.mailpoet_api_version,
+    endpoint: 'settings',
+    action: 'set',
+    data,
+  }).fail((response: ErrorResponse) => {
+    if (response.errors.length > 0) {
+      MailPoet.Notice.error(
+        response.errors.map((error) => error.message),
+        { scroll: true },
+      );
+    }
+  });
