@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { isValid, parseISO } from 'date-fns';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 
 import { MailPoet } from 'mailpoet';
 import { Select } from 'common/form/select/select';
@@ -8,7 +8,7 @@ import { Datepicker } from 'common/datepicker/datepicker';
 import { Grid } from 'common/grid';
 import { Input } from 'common/form/input/input';
 
-import { WordpressRoleFormItem } from '../types';
+import { DateFormItem } from '../types';
 
 export enum SubscribedDateOperator {
   BEFORE = 'before',
@@ -53,7 +53,7 @@ type Props = {
 };
 
 export function SubscribedDateFields({ filterIndex }: Props): JSX.Element {
-  const segment: WordpressRoleFormItem = useSelect(
+  const segment: DateFormItem = useSelect(
     (select) =>
       select('mailpoet-dynamic-segments-form').getSegmentFilter(filterIndex),
     [filterIndex],

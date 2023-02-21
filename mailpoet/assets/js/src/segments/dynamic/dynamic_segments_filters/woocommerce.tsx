@@ -3,7 +3,7 @@ import { MailPoet } from 'mailpoet';
 import { filter } from 'lodash/fp';
 import { ReactSelect } from 'common/form/react_select/react_select';
 import { Select } from 'common/form/select/select';
-import { useSelect, useDispatch } from '@wordpress/data';
+import { useDispatch, useSelect } from '@wordpress/data';
 
 import { Grid } from 'common/grid';
 import { Input } from 'common/form/input/input';
@@ -17,9 +17,12 @@ import {
   WooCommerceFormItem,
 } from '../types';
 
+import { SubscribedDateFields } from './subscriber_subscribed_date';
+
 enum WooCommerceActionTypes {
   NUMBER_OF_ORDERS = 'numberOfOrders',
   PURCHASED_CATEGORY = 'purchasedCategory',
+  PURCHASE_DATE = 'purchaseDate',
   PURCHASED_PRODUCT = 'purchasedProduct',
   TOTAL_SPENT = 'totalSpent',
   CUSTOMER_IN_COUNTRY = 'customerInCountry',
@@ -34,6 +37,11 @@ export const WooCommerceOptions = [
   {
     value: WooCommerceActionTypes.NUMBER_OF_ORDERS,
     label: MailPoet.I18n.t('wooNumberOfOrders'),
+    group: SegmentTypes.WooCommerce,
+  },
+  {
+    value: WooCommerceActionTypes.PURCHASE_DATE,
+    label: MailPoet.I18n.t('wooPurchaseDate'),
     group: SegmentTypes.WooCommerce,
   },
   {
@@ -311,6 +319,8 @@ export const WooCommerceFields: FunctionComponent<Props> = ({
         </Grid.CenteredRow>
       </>
     );
+  } else if (segment.action === WooCommerceActionTypes.PURCHASE_DATE) {
+    optionFields = SubscribedDateFields({ filterIndex });
   } else if (segment.action === WooCommerceActionTypes.NUMBER_OF_ORDERS) {
     optionFields = (
       <>
