@@ -17,7 +17,7 @@ import {
   WooCommerceFormItem,
 } from '../types';
 
-import { SubscribedDateFields } from './subscriber_subscribed_date';
+import { DateFields } from './date_fields';
 
 enum WooCommerceActionTypes {
   NUMBER_OF_ORDERS = 'numberOfOrders',
@@ -320,7 +320,7 @@ export const WooCommerceFields: FunctionComponent<Props> = ({
       </>
     );
   } else if (segment.action === WooCommerceActionTypes.PURCHASE_DATE) {
-    optionFields = SubscribedDateFields({ filterIndex });
+    optionFields = DateFields({ filterIndex });
   } else if (segment.action === WooCommerceActionTypes.NUMBER_OF_ORDERS) {
     optionFields = (
       <>
