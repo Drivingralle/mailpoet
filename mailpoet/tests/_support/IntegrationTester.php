@@ -1,16 +1,18 @@
 <?php declare(strict_types = 1);
 
 use Automattic\WooCommerce\Admin\API\Reports\Orders\Stats\DataStore;
-use MailPoet\Automation\Engine\Data\Automation;
-use MailPoet\Automation\Engine\Data\AutomationRun;
-use MailPoet\Automation\Engine\Data\NextStep;
-use MailPoet\Automation\Engine\Data\Step;
-use MailPoet\Automation\Engine\Storage\AutomationRunStorage;
-use MailPoet\Automation\Engine\Storage\AutomationStorage;
-use MailPoet\Automation\Integrations\Core\Actions\DelayAction;
+use Codeception\Scenario;
 use MailPoet\DI\ContainerWrapper;
+use MailPoet\Entities\DynamicSegmentFilterData;
+use MailPoet\Entities\DynamicSegmentFilterEntity;
+use MailPoet\Entities\SegmentEntity;
+use MailPoet\Entities\SubscriberEntity;
+use MailPoet\Segments\DynamicSegments\Filters\Filter;
 use MailPoet\Util\Security;
 use MailPoet\WooCommerce\Helper;
+use MailPoetVendor\Doctrine\DBAL\Driver\Statement;
+use MailPoetVendor\Doctrine\DBAL\Query\QueryBuilder;
+use MailPoetVendor\Doctrine\ORM\EntityManager;
 
 require_once(ABSPATH . 'wp-admin/includes/user.php');
 require_once(ABSPATH . 'wp-admin/includes/ms.php');
@@ -32,9 +34,20 @@ require_once(ABSPATH . 'wp-admin/includes/ms.php');
 */
 // phpcs:ignore PSR1.Classes.ClassDeclaration
 class IntegrationTester extends \Codeception\Actor {
-  use _generated\IntegrationTesterActions;
+
+  /** @var EntityManager */
+  private $entityManager;
 
   private $wooOrderIds = [];
+
+  use _generated\IntegrationTesterActions;
+
+  public function __construct(
+    Scenario $scenario
+  ) {
+    parent::__construct($scenario);
+    $this->entityManager = ContainerWrapper::getInstance()->get(EntityManager::class);
+  }
 
   public function createWordPressUser(string $email, string $role) {
     return wp_insert_user([
@@ -120,51 +133,33 @@ class IntegrationTester extends \Codeception\Actor {
     expect($date1->getTimestamp())->equals($date2->getTimestamp(), $delta);
   }
 
-  public function createAutomation(string $name, Step ...$steps): ?Automation {
-    $automationStorage = ContainerWrapper::getInstance()->get(AutomationStorage::class);
+  public function getSubscriberEmailsMatchingDynamicFilter(DynamicSegmentFilterData $data, Filter $filter): array {
+    $segment = new SegmentEntity('temporary segment', SegmentEntity::TYPE_DYNAMIC, 'description');
+    $this->entityManager->persist($segment);
+    $filterEntity = new DynamicSegmentFilterEntity($segment, $data);
+    $this->entityManager->persist($filterEntity);
+    $segment->addDynamicFilter($filterEntity);
 
-    if (!$steps) {
-      $steps[] = new Step('trigger', Step::TYPE_TRIGGER, \MailPoet\Automation\Integrations\MailPoet\Triggers\SomeoneSubscribesTrigger::KEY, [], []);
-    }
-    //If we only have a trigger, add a delay step to make the automation valid.
-    if (count($steps) === 1) {
-      $delay = ContainerWrapper::getInstance()->get(DelayAction::class);
-      $delayStep = new Step('delay', Step::TYPE_ACTION, $delay->getKey(), [], []);
-      $steps[0]->setNextSteps([new NextStep($delayStep->getId())]);
-      $steps[] = $delayStep;
-    }
-    $steps = array_merge(
-      [
-        'root' => new Step('root', Step::TYPE_ROOT, 'root', [], [new NextStep($steps[0]->getId())]),
-      ],
-      $steps
-    );
+    $queryBuilder = $filter->apply($this->getSubscribersQueryBuilder(), $filterEntity);
+    $statement = $queryBuilder->execute();
+    $results = $statement instanceof Statement ? $statement->fetchAllAssociative() : [];
+    $emails = array_map(function($row) {
+      $subscriber = $this->entityManager->find(SubscriberEntity::class, $row['inner_subscriber_id']);
+      if (!$subscriber instanceof SubscriberEntity) {
+        throw new \Exception('this is for PhpStan');
+      }
+      return $subscriber->getEmail();
+    }, $results);
 
-    $stepsWithIds = [];
-    foreach ($steps as $step) {
-      $stepsWithIds[$step->getId()] = $step;
-    }
-    $automation = new Automation($name, $stepsWithIds, wp_get_current_user());
-    $automation->setStatus(Automation::STATUS_ACTIVE);
-    return $automationStorage->getAutomation($automationStorage->createAutomation($automation));
+    return $emails;
   }
 
-  public function createAutomationRun(Automation $automation, $subjects = []): ?AutomationRun {
-    $trigger = array_filter($automation->getSteps(), function(Step $step): bool { return $step->getType() === Step::TYPE_TRIGGER;
-
-    });
-    $triggerKeys = array_map(function(Step $step): string { return $step->getKey();
-
-    }, $trigger);
-    $triggerKey = count($triggerKeys) > 0 ? current($triggerKeys) : '';
-
-    $automationRun = new AutomationRun(
-      $automation->getId(),
-      $automation->getVersionId(),
-      $triggerKey,
-      $subjects
-    );
-    $automationRunStorage = ContainerWrapper::getInstance()->get(AutomationRunStorage::class);
-    return $automationRunStorage->getAutomationRun($automationRunStorage->createAutomationRun($automationRun));
+  public function getSubscribersQueryBuilder(): QueryBuilder {
+    $subscribersTable = $this->entityManager->getClassMetadata(SubscriberEntity::class)->getTableName();
+    return $this->entityManager
+      ->getConnection()
+      ->createQueryBuilder()
+      ->select("DISTINCT $subscribersTable.id as inner_subscriber_id")
+      ->from($subscribersTable);
   }
 }

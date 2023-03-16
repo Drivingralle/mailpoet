@@ -3,13 +3,7 @@
 namespace MailPoet\Segments\DynamicSegments\Filters;
 
 use MailPoet\Entities\DynamicSegmentFilterData;
-use MailPoet\Entities\DynamicSegmentFilterEntity;
-use MailPoet\Entities\SegmentEntity;
-use MailPoet\Entities\SubscriberEntity;
-use MailPoet\Subscribers\SubscribersRepository;
 use MailPoet\WooCommerce\Helper;
-use MailPoetVendor\Doctrine\DBAL\ForwardCompatibility\DriverStatement;
-use MailPoetVendor\Doctrine\DBAL\Query\QueryBuilder;
 
 /**
  * @group woo
@@ -34,8 +28,12 @@ class WooCommerceSubscriptionTest extends \MailPoetTest {
   /** @var array */
   private $products = [];
 
+  /** @var WooCommerceSubscription */
+  private $wooCommerceSubscriptionFilter;
+
   public function _before(): void {
     $wooCommerceHelper = $this->diContainer->get(Helper::class);
+    $this->wooCommerceSubscriptionFilter = $this->diContainer->get(WooCommerceSubscription::class);
 
     if ($wooCommerceHelper->isWooCommerceCustomOrdersTableEnabled()) {
       $this->markTestSkipped('WooCommerce Subscriptions does not work with WooCommerce Custom Orders Table.');
@@ -57,19 +55,11 @@ class WooCommerceSubscriptionTest extends \MailPoetTest {
   }
 
   public function testAllSubscribersFoundWithOperatorAny(): void {
-    $testee = $this->diContainer->get(WooCommerceSubscription::class);
-    $queryBuilder = $this->getQueryBuilder();
-    $filter = $this->getSegmentFilter(
+    $filterData = $this->getSegmentFilterData(
       DynamicSegmentFilterData::OPERATOR_ANY
     );
-
-    $resultQuery = $testee->apply($queryBuilder, $filter);
-    $foundSubscribers = $this->getEmailsFromQueryBuilder($resultQuery);
-
-    $this->assertCount(3, $foundSubscribers, "Did not find expected three subscribers.");
-    foreach ($foundSubscribers as $email) {
-      $this->assertTrue(in_array($email, self::ACTIVE_EMAILS));
-    }
+    $emails = $this->tester->getSubscriberEmailsMatchingDynamicFilter($filterData, $this->wooCommerceSubscriptionFilter);
+    $this->assertEqualsCanonicalizing(self::ACTIVE_EMAILS, $emails);
   }
 
   public function testAllSubscribersFoundWithOperatorNoneOf(): void {
@@ -83,20 +73,13 @@ class WooCommerceSubscriptionTest extends \MailPoetTest {
       (int)$subscriberId,
       $product
     );
-    $testee = $this->diContainer->get(WooCommerceSubscription::class);
-    $queryBuilder = $this->getQueryBuilder();
-    $filter = $this->getSegmentFilter(
+    $filterData = $this->getSegmentFilterData(
       DynamicSegmentFilterData::OPERATOR_NONE,
       [$product]
     );
-
-
-    $resultQuery = $testee->apply($queryBuilder, $filter);
-
-    $foundSubscribers = $this->getEmailsFromQueryBuilder($resultQuery);
-
-    $this->assertCount(3, $foundSubscribers);
-    $this->assertFalse(in_array($notToBeFoundEmail, $foundSubscribers));
+    $emails = $this->tester->getSubscriberEmailsMatchingDynamicFilter($filterData, $this->wooCommerceSubscriptionFilter);
+    expect($emails)->count(3);
+    expect(in_array($notToBeFoundEmail, $emails))->false();
     $this->tester->deleteWordPressUser($notToBeFoundEmail);
   }
 
@@ -116,41 +99,14 @@ class WooCommerceSubscriptionTest extends \MailPoetTest {
       (int)$toBeFoundSubscriberId,
       ...$this->products
     );
-    $testee = $this->diContainer->get(WooCommerceSubscription::class);
-    $queryBuilder = $this->getQueryBuilder();
-    $filter = $this->getSegmentFilter(
+    $filterData = $this->getSegmentFilterData(
       DynamicSegmentFilterData::OPERATOR_ALL,
       $this->products
     );
-
-    $resultQuery = $testee->apply($queryBuilder, $filter);
-
-    $foundSubscribers = $this->getEmailsFromQueryBuilder($resultQuery);
-
-    $this->assertCount(1, $foundSubscribers);
-    $this->assertTrue(in_array($toBeFoundEmail, $foundSubscribers));
+    $emails = $this->tester->getSubscriberEmailsMatchingDynamicFilter($filterData, $this->wooCommerceSubscriptionFilter);
+    $this->assertEqualsCanonicalizing([$toBeFoundEmail], $emails);
     $this->tester->deleteWordPressUser($notToBeFoundEmail);
     $this->tester->deleteWordPressUser($toBeFoundEmail);
-  }
-
-  private function getEmailsFromQueryBuilder(QueryBuilder $builder): array {
-
-    $repository = $this->diContainer->get(SubscribersRepository::class);
-    $statement = $builder->execute();
-    if (!$statement instanceof DriverStatement) {
-      throw new \RuntimeException("Could not create statement.");
-    }
-    $data = $statement->fetchAllAssociative();
-    return array_map(
-      function(array $data) use ($repository): ?string {
-        /**
-         * @var SubscriberEntity|null $subscriber
-         */
-        $subscriber = $repository->findOneById($data['id']);
-        return $subscriber ? $subscriber->getEmail() : null;
-      },
-      $data
-    );
   }
 
   private function createProduct(string $name): int {
@@ -190,32 +146,17 @@ class WooCommerceSubscriptionTest extends \MailPoetTest {
     return $orderId;
   }
 
-  private function getSegmentFilter(string $operator, array $productIds = null): DynamicSegmentFilterEntity {
+  private function getSegmentFilterData(string $operator, array $productIds = null): DynamicSegmentFilterData {
     $filterData = [
       'operator' => $operator,
-      'product_ids' => $productIds ? $productIds : $this->products,
+      'product_ids' => $productIds ?: $this->products,
     ];
 
-    $data = new DynamicSegmentFilterData(
+    return new DynamicSegmentFilterData(
       DynamicSegmentFilterData::TYPE_WOOCOMMERCE_SUBSCRIPTION,
       WooCommerceSubscription::ACTION_HAS_ACTIVE,
       $filterData
     );
-    $segment = new SegmentEntity('Dynamic Segment', SegmentEntity::TYPE_DYNAMIC, 'description');
-    $this->entityManager->persist($segment);
-    $dynamicSegmentFilter = new DynamicSegmentFilterEntity($segment, $data);
-    $this->entityManager->persist($dynamicSegmentFilter);
-    $segment->addDynamicFilter($dynamicSegmentFilter);
-    return $dynamicSegmentFilter;
-  }
-
-  private function getQueryBuilder(): QueryBuilder {
-    $subscribersTable = $this->entityManager->getClassMetadata(SubscriberEntity::class)->getTableName();
-    return $this->entityManager
-      ->getConnection()
-      ->createQueryBuilder()
-      ->select("DISTINCT $subscribersTable.id")
-      ->from($subscribersTable);
   }
 
   public function _after(): void {
