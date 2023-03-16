@@ -11,6 +11,7 @@ use MailPoet\Entities\SubscriberEntity;
 use MailPoet\Segments\DynamicSegments\Filters\Filter;
 use MailPoet\Util\Security;
 use MailPoet\WooCommerce\Helper;
+use MailPoetVendor\Doctrine\DBAL\Connection;
 use MailPoetVendor\Doctrine\DBAL\Driver\Statement;
 use MailPoetVendor\Doctrine\DBAL\Query\QueryBuilder;
 use MailPoetVendor\Doctrine\ORM\EntityManager;
@@ -36,6 +37,9 @@ require_once(ABSPATH . 'wp-admin/includes/ms.php');
 // phpcs:ignore PSR1.Classes.ClassDeclaration
 class IntegrationTester extends Actor {
 
+  /** @var ContainerWrapper */
+  protected $diContainer;
+
   /** @var EntityManager */
   private $entityManager;
 
@@ -43,13 +47,18 @@ class IntegrationTester extends Actor {
 
   private $createdUserEmails = [];
 
+  /** @var Connection */
+  private $connection;
+
   use _generated\IntegrationTesterActions;
 
   public function __construct(
     Scenario $scenario
   ) {
     parent::__construct($scenario);
-    $this->entityManager = ContainerWrapper::getInstance()->get(EntityManager::class);
+    $this->diContainer = ContainerWrapper::getInstance(WP_DEBUG);
+    $this->entityManager = $this->diContainer->get(EntityManager::class);
+    $this->connection = $this->diContainer->get(Connection::class);
   }
 
   public function createWordPressUser(string $email, string $role) {
@@ -82,6 +91,17 @@ class IntegrationTester extends Actor {
     foreach ($this->createdUserEmails as $email) {
       $this->deleteWordPressUser($email);
     }
+    $this->createdUserEmails = [];
+  }
+
+  public function createCustomer(string $email, string $role): int {
+    global $wpdb;
+    $userId = $this->createWordPressUser($email, $role);
+    $this->connection->executeQuery("
+      INSERT INTO {$wpdb->prefix}wc_customer_lookup (customer_id, user_id, first_name, last_name, email)
+      VALUES ({$userId}, {$userId}, 'First Name', 'Last Name', '{$email}')
+    ");
+    return $userId;
   }
 
   public function createWooCommerceOrder(array $data = []): \WC_Order {
