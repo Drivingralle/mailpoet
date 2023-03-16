@@ -13,7 +13,6 @@ class UserRoleTest extends \MailPoetTest {
   public function _before(): void {
     global $wpdb;
     $this->userRoleFilter = $this->diContainer->get(UserRole::class);
-    $this->cleanup();
     // Insert WP users and subscribers are created automatically
     $this->tester->createWordPressUser('user-role-test1@example.com', 'editor');
     $this->tester->createWordPressUser('user-role-test2@example.com', 'administrator');
@@ -27,6 +26,11 @@ class UserRoleTest extends \MailPoetTest {
       . " WHERE meta_key='{$wpdb->prefix}capabilities' AND user_id = " . $userId
     );
     $this->tester->createWordPressUser('user-role-test6@example.com', 'subscriber');
+  }
+
+  public function _after() {
+    parent::_after();
+    $this->cleanUp();
   }
 
   public function testItAppliesFilter(): void {
@@ -72,11 +76,6 @@ class UserRoleTest extends \MailPoetTest {
       $filterData['operator'] = $operator;
     }
     return new DynamicSegmentFilterData(DynamicSegmentFilterData::TYPE_USER_ROLE, UserRole::TYPE, $filterData);
-  }
-
-  public function _after(): void {
-    parent::_after();
-    $this->cleanup();
   }
 
   private function cleanup(): void {

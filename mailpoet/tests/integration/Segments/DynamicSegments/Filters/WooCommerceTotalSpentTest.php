@@ -24,7 +24,6 @@ class WooCommerceTotalSpentTest extends \MailPoetTest {
   public function _before(): void {
     $this->totalSpentFilter = $this->diContainer->get(WooCommerceTotalSpent::class);
     $this->wp = $this->diContainer->get(WPFunctions::class);
-    $this->cleanUp();
 
     $customerId1 = $this->createCustomer('customer1@example.com', 'customer');
     $customerId2 = $this->createCustomer('customer2@example.com', 'customer');
@@ -34,6 +33,11 @@ class WooCommerceTotalSpentTest extends \MailPoetTest {
     $this->orders[] = $this->createOrder($customerId1, Carbon::now(), 5);
     $this->orders[] = $this->createOrder($customerId2, Carbon::now(), 15);
     $this->orders[] = $this->createOrder($customerId3, Carbon::now(), 25);
+  }
+
+  public function _after() {
+    parent::_after();
+    $this->cleanUp();
   }
 
   public function testItGetsCustomersThatSpentFifteenInTheLastDay(): void {
@@ -100,10 +104,6 @@ class WooCommerceTotalSpentTest extends \MailPoetTest {
     $this->tester->updateWooOrderStats($order->get_id());
 
     return $order->get_id();
-  }
-
-  public function _after(): void {
-    $this->cleanUp();
   }
 
   private function cleanUp(): void {

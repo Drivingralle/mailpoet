@@ -362,6 +362,7 @@ class EmailActionTest extends \MailPoetTest {
   }
 
   public function _after(): void {
+    parent::_after();
     $this->cleanData();
   }
 

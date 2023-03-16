@@ -27,7 +27,6 @@ class WooCommerceNumberOfOrdersTest extends \MailPoetTest {
   public function _before(): void {
     $this->subscriberFactory = new SubscriberFactory();
     $this->numberOfOrdersFilter = $this->diContainer->get(WooCommerceNumberOfOrders::class);
-    $this->cleanUp();
 
     $customerId1 = $this->createCustomer('customer1@example.com', 'customer');
     $customerId2 = $this->createCustomer('customer2@example.com', 'customer');
@@ -37,6 +36,11 @@ class WooCommerceNumberOfOrdersTest extends \MailPoetTest {
     $this->orders[] = $this->createOrder($customerId2, Carbon::now());
     $this->orders[] = $this->createOrder($customerId2, Carbon::now());
     $this->orders[] = $this->createOrder($customerId3, Carbon::now());
+  }
+
+  public function _after() {
+    parent::_after();
+    $this->cleanUp();
   }
 
   public function testItGetsCustomersThatPlacedTwoOrdersInTheLastDay(): void {
@@ -100,10 +104,6 @@ class WooCommerceNumberOfOrdersTest extends \MailPoetTest {
     $this->tester->updateWooOrderStats($order->get_id());
 
     return $order->get_id();
-  }
-
-  public function _after(): void {
-    $this->cleanUp();
   }
 
   private function cleanUp(): void {

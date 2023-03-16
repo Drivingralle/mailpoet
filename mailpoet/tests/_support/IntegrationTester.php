@@ -1,6 +1,7 @@
 <?php declare(strict_types = 1);
 
 use Automattic\WooCommerce\Admin\API\Reports\Orders\Stats\DataStore;
+use Codeception\Actor;
 use Codeception\Scenario;
 use MailPoet\DI\ContainerWrapper;
 use MailPoet\Entities\DynamicSegmentFilterData;
@@ -33,12 +34,14 @@ require_once(ABSPATH . 'wp-admin/includes/ms.php');
  * @SuppressWarnings(PHPMD)
 */
 // phpcs:ignore PSR1.Classes.ClassDeclaration
-class IntegrationTester extends \Codeception\Actor {
+class IntegrationTester extends Actor {
 
   /** @var EntityManager */
   private $entityManager;
 
   private $wooOrderIds = [];
+
+  private $createdUserEmails = [];
 
   use _generated\IntegrationTesterActions;
 
@@ -50,12 +53,17 @@ class IntegrationTester extends \Codeception\Actor {
   }
 
   public function createWordPressUser(string $email, string $role) {
-    return wp_insert_user([
+    $userId = wp_insert_user([
       'user_login' => explode('@', $email)[0],
       'user_email' => $email,
       'role' => $role,
       'user_pass' => '12123154',
     ]);
+    if ($userId instanceof \WP_Error) {
+      throw new \MailPoet\RuntimeException('Could not create WordPress user: ' . $userId->get_error_message());
+    }
+    $this->createdUserEmails[] = $email;
+    return $userId;
   }
 
   public function deleteWordPressUser(string $email) {
@@ -67,6 +75,12 @@ class IntegrationTester extends \Codeception\Actor {
       wpmu_delete_user($user->ID);
     } else {
       wp_delete_user($user->ID);
+    }
+  }
+
+  public function deleteCreatedWordpressUsers(): void {
+    foreach ($this->createdUserEmails as $email) {
+      $this->deleteWordPressUser($email);
     }
   }
 
@@ -161,5 +175,10 @@ class IntegrationTester extends \Codeception\Actor {
       ->createQueryBuilder()
       ->select("DISTINCT $subscribersTable.id as inner_subscriber_id")
       ->from($subscribersTable);
+  }
+
+  public function deleteTestData(): void {
+    $this->deleteTestWooOrders();
+    $this->deleteCreatedWordpressUsers();
   }
 }

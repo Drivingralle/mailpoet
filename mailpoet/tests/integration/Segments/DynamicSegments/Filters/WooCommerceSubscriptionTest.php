@@ -39,7 +39,6 @@ class WooCommerceSubscriptionTest extends \MailPoetTest {
       $this->markTestSkipped('WooCommerce Subscriptions does not work with WooCommerce Custom Orders Table.');
     }
 
-    $this->cleanup();
     $productId = $this->createProduct('Premium Newsletter');
     foreach (self::SUBSCRIBER_EMAILS as $email) {
       $userId = $this->tester->createWordPressUser($email, 'subscriber');
@@ -52,6 +51,11 @@ class WooCommerceSubscriptionTest extends \MailPoetTest {
         $productId
       );
     }
+  }
+
+  public function _after() {
+    parent::_after();
+    $this->cleanUp();
   }
 
   public function testAllSubscribersFoundWithOperatorAny(): void {
@@ -157,10 +161,6 @@ class WooCommerceSubscriptionTest extends \MailPoetTest {
       WooCommerceSubscription::ACTION_HAS_ACTIVE,
       $filterData
     );
-  }
-
-  public function _after(): void {
-    $this->cleanUp();
   }
 
   public function cleanUp(): void {

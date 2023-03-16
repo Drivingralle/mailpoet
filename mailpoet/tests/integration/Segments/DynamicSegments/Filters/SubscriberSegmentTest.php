@@ -21,8 +21,6 @@ class SubscriberSegmentTest extends \MailPoetTest {
   public function _before(): void {
     $this->filter = $this->diContainer->get(SubscriberSegment::class);
 
-    $this->cleanUp();
-
     $subscriber1 = new SubscriberEntity();
     $subscriber1->setLastSubscribedAt(CarbonImmutable::now());
     $subscriber1->setEmail('a1@example.com');
@@ -48,6 +46,11 @@ class SubscriberSegmentTest extends \MailPoetTest {
     $this->entityManager->persist(new SubscriberSegmentEntity($this->segment2, $subscriber1, SubscriberEntity::STATUS_SUBSCRIBED));
     $this->entityManager->persist(new SubscriberSegmentEntity($this->segment2, $subscriber2, SubscriberEntity::STATUS_SUBSCRIBED));
     $this->entityManager->flush();
+  }
+
+  public function _after() {
+    parent::_after();
+    $this->cleanUp();
   }
 
   public function testSubscribedAnyOf(): void {

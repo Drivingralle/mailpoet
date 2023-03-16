@@ -33,8 +33,6 @@ class WooCommerceCategoryTest extends \MailPoetTest {
     $this->wooCommerceCategoryFilter = $this->diContainer->get(WooCommerceCategory::class);
     $this->subscribersRepository = $this->diContainer->get(SubscribersRepository::class);
 
-    $this->cleanUp();
-
     $customerId1 = $this->createCustomer('customer1@example.com', 'customer');
     $customerId2 = $this->createCustomer('customer2@example.com', 'customer');
     $customerId3OnHold = $this->createCustomer('customer-on-hold@example.com', 'customer');
@@ -57,6 +55,11 @@ class WooCommerceCategoryTest extends \MailPoetTest {
     $this->addToOrder(3, $this->orderIds[2], $this->productIds[1], $customerId3OnHold);
     $this->orderIds[] = $this->createOrder($customerId4PendingPayment, Carbon::now(), 'wc-pending');
     $this->addToOrder(4, $this->orderIds[3], $this->productIds[1], $customerId4PendingPayment);
+  }
+
+  public function _after() {
+    parent::_after();
+    $this->cleanUp();
   }
 
   public function testItGetsSubscribersThatPurchasedProductsInAnyCategory(): void {
@@ -156,10 +159,6 @@ class WooCommerceCategoryTest extends \MailPoetTest {
     $this->subscribersRepository->persist($subscriber);
     $this->subscribersRepository->flush();
     return $subscriber;
-  }
-
-  public function _after(): void {
-    $this->cleanUp();
   }
 
   private function cleanUp(): void {

@@ -177,6 +177,7 @@ class EmailOpensAbsoluteCountActionTest extends \MailPoetTest {
   }
 
   public function _after(): void {
+    parent::_after();
     $this->cleanData();
   }
 

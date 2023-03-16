@@ -14,7 +14,6 @@ class SubscriberScoreTest extends \MailPoetTest {
 
   public function _before(): void {
     $this->filter = $this->diContainer->get(SubscriberScore::class);
-    $this->cleanUp();
 
     $subscriber = new SubscriberEntity();
     $subscriber->setEngagementScore(0);
@@ -47,6 +46,11 @@ class SubscriberScoreTest extends \MailPoetTest {
     $subscriber->setEmail('e123456@example.com');
     $this->entityManager->persist($subscriber);
     $this->entityManager->flush();
+  }
+
+  public function _after() {
+    parent::_after();
+    $this->cleanUp();
   }
 
   public function testGetHigherThan(): void {

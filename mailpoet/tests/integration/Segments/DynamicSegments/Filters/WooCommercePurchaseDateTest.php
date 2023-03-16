@@ -24,6 +24,11 @@ class WooCommercePurchaseDateTest extends \MailPoetTest {
     $this->wooCommercePurchaseDate = $this->diContainer->get(WooCommercePurchaseDate::class);
   }
 
+  public function _after() {
+    parent::_after();
+    $this->cleanUp();
+  }
+
   public function testGetSubscribersWithOrderBeforeDate(): void {
     $customerId1 = $this->createCustomer('c1@example.com');
     $customerId2 = $this->createCustomer('c2@example.com');
@@ -161,11 +166,6 @@ class WooCommercePurchaseDateTest extends \MailPoetTest {
     $this->tester->updateWooOrderStats($order->get_id());
 
     return $order->get_id();
-  }
-
-  public function _after() {
-    parent::_after();
-    $this->cleanUp();
   }
 
   private function cleanUp(): void {

@@ -29,7 +29,6 @@ class EmailActionClickAnyTest extends \MailPoetTest {
   public $subscriberOpenedClicked;
 
   public function _before(): void {
-    $this->cleanData();
     $this->emailAction = $this->diContainer->get(EmailActionClickAny::class);
     $this->newsletter = new NewsletterEntity();
     $task = new ScheduledTaskEntity();
@@ -58,6 +57,11 @@ class EmailActionClickAnyTest extends \MailPoetTest {
     $this->createStatisticsOpens($this->subscriberOpenedNotClicked);
 
     $this->addClickedToLink('http://example.com', $this->newsletter, $this->subscriberOpenedClicked);
+  }
+
+  public function _after(): void {
+    parent::_after();
+    $this->cleanData();
   }
 
   public function testGetClickedAnyLink(): void {
@@ -126,10 +130,6 @@ class EmailActionClickAnyTest extends \MailPoetTest {
     );
     $this->entityManager->persist($click);
     $this->entityManager->flush();
-  }
-
-  public function _after(): void {
-    $this->cleanData();
   }
 
   private function cleanData(): void {

@@ -18,13 +18,17 @@ class MailPoetCustomFieldsTest extends \MailPoetTest {
   private $subscribers = [];
 
   public function _before(): void {
-    $this->cleanData();
     $this->filter = $this->diContainer->get(MailPoetCustomFields::class);
     $this->subscribers = [];
     $this->subscribers[] = $this->createSubscriber('subscriber1@example.com');
     $this->subscribers[] = $this->createSubscriber('subscriber2@example.com');
     $this->subscribers[] = $this->createSubscriber('subscriber3@example.com');
     $this->entityManager->flush();
+  }
+
+  public function _after() {
+    parent::_after();
+    $this->cleanData();
   }
 
   public function testItFiltersSubscribersWithTextEquals(): void {

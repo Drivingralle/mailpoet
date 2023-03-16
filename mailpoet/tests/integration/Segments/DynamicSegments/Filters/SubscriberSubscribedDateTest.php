@@ -15,7 +15,6 @@ class SubscriberSubscribedDateTest extends \MailPoetTest {
 
   public function _before(): void {
     $this->filter = $this->diContainer->get(SubscriberSubscribedDate::class);
-    $this->cleanUp();
 
     $subscriber = new SubscriberEntity();
     $subscriber->setLastSubscribedAt(CarbonImmutable::now());
@@ -42,6 +41,11 @@ class SubscriberSubscribedDateTest extends \MailPoetTest {
     $subscriber->setEmail('e12345@example.com');
     $this->entityManager->persist($subscriber);
     $this->entityManager->flush();
+  }
+
+  public function _after() {
+    parent::_after();
+    $this->cleanUp();
   }
 
   public function testGetBefore(): void {

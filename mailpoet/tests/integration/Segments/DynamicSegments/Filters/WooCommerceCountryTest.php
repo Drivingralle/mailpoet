@@ -18,8 +18,6 @@ class WooCommerceCountryTest extends \MailPoetTest {
   public function _before(): void {
     $this->wooCommerceCountryFilter = $this->diContainer->get(WooCommerceCountry::class);
 
-    $this->cleanup();
-
     $userId1 = $this->tester->createWordPressUser('customer1@example.com', 'customer');
     $userId2 = $this->tester->createWordPressUser('customer2@example.com', 'customer');
     $userId3 = $this->tester->createWordPressUser('customer3@example.com', 'customer');
@@ -29,7 +27,11 @@ class WooCommerceCountryTest extends \MailPoetTest {
     $this->createCustomerLookupData(['user_id' => $userId2, 'email' => 'customer2@example.com', 'country' => 'US']);
     $this->createCustomerLookupData(['user_id' => $userId3, 'email' => 'customer3@example.com', 'country' => 'US']);
     $this->createCustomerLookupData(['user_id' => $userId4, 'email' => 'customer4@example.com', 'country' => 'ES']);
+  }
 
+  public function _after() {
+    parent::_after();
+    $this->cleanUp();
   }
 
   public function testItAppliesFilter(): void {
@@ -86,10 +88,6 @@ class WooCommerceCountryTest extends \MailPoetTest {
     $orderLookupTable = $wpdb->prefix . 'wc_order_stats';
     $connection->executeStatement("TRUNCATE $lookupTable");
     $connection->executeStatement("TRUNCATE $orderLookupTable");
-  }
-
-  public function _after(): void {
-    $this->cleanUp();
   }
 
   private function cleanup(): void {
