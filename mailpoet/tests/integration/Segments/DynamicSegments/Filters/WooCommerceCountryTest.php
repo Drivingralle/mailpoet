@@ -81,24 +81,8 @@ class WooCommerceCountryTest extends \MailPoetTest {
     OrdersStatsDataStore::sync_order($order->get_id());
   }
 
-  private function cleanUpLookUpTables(): void {
-    global $wpdb;
-    $connection = $this->entityManager->getConnection();
-    $lookupTable = $wpdb->prefix . 'wc_customer_lookup';
-    $orderLookupTable = $wpdb->prefix . 'wc_order_stats';
-    $connection->executeStatement("TRUNCATE $lookupTable");
-    $connection->executeStatement("TRUNCATE $orderLookupTable");
-  }
-
   private function cleanup(): void {
     $this->truncateEntity(SegmentEntity::class);
     $this->truncateEntity(SubscriberEntity::class);
-
-    $emails = ['customer1@example.com', 'customer2@example.com', 'customer3@example.com', 'customer4@example.com'];
-    foreach ($emails as $email) {
-      $this->tester->deleteWordPressUser($email);
-    }
-    $this->tester->deleteTestWooOrders();
-    $this->cleanUpLookUpTables();
   }
 }

@@ -193,7 +193,7 @@ abstract class MailPoetTest extends \Codeception\TestCase\Test { // phpcs:ignore
 
   public function _after() {
     parent::_after();
-    $this->tester->deleteTestData();
+    $this->tester->cleanUpTestData();
   }
 
   protected function backupGlobals(): void {
