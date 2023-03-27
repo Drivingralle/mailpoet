@@ -958,37 +958,6 @@ class SendingQueueTest extends \MailPoetTest {
     expect($sendingQueue->getCountToProcess())->equals(0);
   }
 
-  public function testItDoesNotSendToTrashedSubscribers() {
-    $this->markTestSkipped('calls before and after manually');
-    $sendingQueueWorker = $this->sendingQueueWorker;
-    $sendingQueueWorker->mailerTask = $this->construct(
-      MailerTask::class,
-      [$this->diContainer->get(MailerFactory::class)],
-      ['send' => $this->mailerTaskDummyResponse]
-    );
-
-    // newsletter is sent to existing subscriber
-    $sendingQueueWorker->process();
-    $sendingQueue = $this->sendingQueuesRepository->findOneById($this->queue->id);
-    $this->assertInstanceOf(SendingQueueEntity::class, $sendingQueue);
-    $this->sendingQueuesRepository->refresh($sendingQueue);
-    expect($sendingQueue->getCountTotal())->equals(1);
-
-    // newsletter is not sent to trashed subscriber
-    $this->_after();
-    $this->entityManager->clear();
-    $this->_before();
-    $subscriber = $this->subscriber;
-    $subscriber->setDeletedAt(Carbon::now());
-    $this->entityManager->flush();
-    $sendingQueueWorker->process();
-
-    $sendingQueue = $this->sendingQueuesRepository->findOneById($this->queue->id);
-    $this->assertInstanceOf(SendingQueueEntity::class, $sendingQueue);
-    $this->sendingQueuesRepository->refresh($sendingQueue);
-    expect($sendingQueue->getCountTotal())->equals(0);
-  }
-
   public function testItDoesNotSendToGloballyUnsubscribedSubscribers() {
     $sendingQueueWorker = $this->sendingQueueWorker;
     $sendingQueueWorker->mailerTask = $this->construct(

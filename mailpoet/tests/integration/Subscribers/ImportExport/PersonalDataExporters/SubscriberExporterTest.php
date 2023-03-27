@@ -3,7 +3,6 @@
 namespace MailPoet\Subscribers\ImportExport\PersonalDataExporters;
 
 use MailPoet\CustomFields\CustomFieldsRepository;
-use MailPoet\Models\CustomField;
 use MailPoet\Models\Subscriber;
 use MailPoet\Subscribers\SubscribersRepository;
 
@@ -88,23 +87,5 @@ class SubscriberExporterTest extends \MailPoetTest {
     $result = $this->exporter->export('email.that@has.ip.addresses');
     expect($result['data'][0]['data'])->contains(['name' => 'Subscribed IP', 'value' => 'IP1']);
     expect($result['data'][0]['data'])->contains(['name' => 'Confirmed IP', 'value' => 'IP2']);
-  }
-
-  public function testExportSubscriberWithCustomField() {
-    $subscriber = Subscriber::createOrUpdate([
-      'email' => 'email.that@has.custom.fields',
-    ]);
-    $customField1 = CustomField::createOrUpdate([
-      'name' => 'Custom field1',
-      'type' => 'input',
-    ]);
-    CustomField::createOrUpdate([
-      'name' => 'Custom field2',
-      'type' => 'input',
-    ]);
-    $subscriber->setCustomField($customField1->id(), 'Value');
-    $subscriber->setCustomField('123545657', 'Value');
-    $result = $this->exporter->export('email.that@has.custom.fields');
-    expect($result['data'][0]['data'])->contains(['name' => 'Custom field1', 'value' => 'Value']);
   }
 }

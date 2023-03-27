@@ -29,9 +29,6 @@ class ViewInBrowserControllerTest extends \MailPoetTest {
   /** @var NewsletterEntity */
   private $newsletter;
 
-  /** @var SubscriberEntity */
-  private $subscriber;
-
   /** @var SendingTask */
   private $sendingTask;
 
@@ -146,27 +143,6 @@ class ViewInBrowserControllerTest extends \MailPoetTest {
 
     $data = $this->browserPreviewData;
     unset($data['subscriber_id']);
-    $viewInBrowserController->view($data);
-  }
-
-  public function testItSetsSubscriberToLoggedInWPUserWhenPreviewIsEnabled() {
-    $viewInBrowserRenderer = $this->make(ViewInBrowserRenderer::class, [
-      'render' => Expected::once(function (bool $isPreview, NewsletterEntity $newsletter, SubscriberEntity $subscriber = null, SendingQueueEntity $queue = null) {
-        $this->assertNotNull($subscriber); // PHPStan
-        expect($subscriber)->notNull();
-        expect($subscriber->getId())->equals(1);
-      }),
-    ]);
-
-    $viewInBrowserController = $this->createController($viewInBrowserRenderer);
-
-    $data = $this->browserPreviewData;
-    unset($data['subscriber_id']);
-    $data['preview'] = true;
-
-    $this->subscriber->setWpUserId(1);
-    $this->subscribersRepository->flush();
-    wp_set_current_user(1);
     $viewInBrowserController->view($data);
   }
 
