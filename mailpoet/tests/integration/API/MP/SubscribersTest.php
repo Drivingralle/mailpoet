@@ -14,7 +14,6 @@ use MailPoet\Config\Changelog;
 use MailPoet\CustomFields\CustomFieldsRepository;
 use MailPoet\Entities\CustomFieldEntity;
 use MailPoet\Entities\SegmentEntity;
-use MailPoet\Entities\StatisticsUnsubscribeEntity;
 use MailPoet\Entities\SubscriberEntity;
 use MailPoet\Models\ScheduledTask;
 use MailPoet\Models\SendingQueue;
