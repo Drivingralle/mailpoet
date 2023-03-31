@@ -28,8 +28,7 @@ class IntegrationCleanupExtension extends Extension {
   private $entityManager;
 
   public static $events = [
-    Events::TEST_BEFORE => 'cleanup',
-    Events::TEST_AFTER => 'cleanup',
+    Events::TEST_BEFORE => 'beforeTest',
     Events::SUITE_BEFORE => 'beforeSuite',
   ];
   /** @var string */
@@ -49,7 +48,7 @@ class IntegrationCleanupExtension extends Extension {
     $this->deleteStatement .= 'SET FOREIGN_KEY_CHECKS=1';
   }
 
-  public function cleanup(TestEvent $event) {
+  public function beforeTest(TestEvent $event) {
     $this->connection->executeStatement($this->deleteStatement);
   }
 }
