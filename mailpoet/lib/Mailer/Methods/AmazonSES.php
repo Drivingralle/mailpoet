@@ -109,8 +109,11 @@ class AmazonSES extends PHPMailerMethod {
         $this->url,
         $this->request($newsletter, $subscriber, $extraParams)
       );
+      var_dump($result);ob_flush(); // phpcs:ignore
     } catch (\Exception $e) {
+      var_dump($e->getMessage());ob_flush(); // phpcs:ignore
       $error = $this->errorMapper->getErrorFromException($e, $subscriber);
+      var_dump($error);ob_flush(); // phpcs:ignore
       return Mailer::formatMailerErrorResult($error);
     }
     if (is_wp_error($result)) {

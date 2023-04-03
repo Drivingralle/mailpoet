@@ -237,6 +237,7 @@ class AmazonSESTest extends \MailPoetTest {
       $this->newsletter,
       $invalidSubscriber
     );
+    var_dump($result);ob_flush(); // phpcs:ignore
     expect($result['response'])->false();
     expect($result['error'])->isInstanceOf(MailerError::class);
     expect($result['error']->getMessage())->stringContainsString('Invalid address');
