@@ -31,6 +31,8 @@ class IntegrationCleanupExtension extends Extension {
     Events::TEST_BEFORE => 'beforeTest',
     Events::SUITE_BEFORE => 'beforeSuite',
   ];
+  /** @var string */
+  private $deleteStatement;
 
   public function beforeSuite(SuiteEvent $event) {
     $this->connection = ContainerWrapper::getInstance()->get(Connection::class);
@@ -39,13 +41,15 @@ class IntegrationCleanupExtension extends Extension {
     $this->tables = array_map(function($entityMeta) {
       return $entityMeta->getTableName();
     }, $entitiesMeta);
+    $this->deleteStatement = 'SET FOREIGN_KEY_CHECKS=0;';
+    foreach ($this->tables as $table) {
+      $this->deleteStatement .= "DELETE FROM $table;";
+    }
+    $this->deleteStatement .= 'SET FOREIGN_KEY_CHECKS=1';
   }
 
   public function beforeTest(TestEvent $event) {
-    $this->connection->executeStatement('SET FOREIGN_KEY_CHECKS=0');
-    foreach ($this->tables as $table) {
-      $this->connection->executeStatement("DELETE FROM $table");
-    }
-    $this->connection->executeStatement('SET FOREIGN_KEY_CHECKS=1');
+    $this->connection->executeStatement($this->deleteStatement);
+    sleep(1);
   }
 }
