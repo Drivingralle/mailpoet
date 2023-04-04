@@ -50,6 +50,5 @@ class IntegrationCleanupExtension extends Extension {
 
   public function beforeTest(TestEvent $event) {
     $this->connection->executeStatement($this->deleteStatement);
-    sleep(1);
   }
 }
