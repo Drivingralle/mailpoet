@@ -753,44 +753,9 @@ workflows:
       - integration_tests:
           <<: *slack-fail-post-step
           group: woo
-          enable_cot: 1
-          enable_cot_sync: 1
-          name: integration_test_woo_cot_sync
-          requires:
-            - unit_tests
-            - static_analysis_php8
-            - qa_js
-            - qa_php
-      - integration_tests:
-          <<: *slack-fail-post-step
-          group: woo
-          enable_cot: 1
-          enable_cot_sync: 0
-          name: integration_test_woo_cot_no_sync
-          requires:
-            - unit_tests
-            - static_analysis_php8
-            - qa_js
-            - qa_php
-      - integration_tests:
-          <<: *slack-fail-post-step
-          group: woo
           name: integration_test_woo_cot_off
           requires:
-            - unit_tests
-            - static_analysis_php8
-            - qa_js
-            - qa_php
-      - integration_tests:
-          <<: *slack-fail-post-step
-          skip_group: woo
-          skip_plugins: 1
-          name: integration_test_base
-          requires:
-            - unit_tests
-            - static_analysis_php8
-            - qa_js
-            - qa_php
+            - build
       - acceptance_tests:
           <<: *slack-fail-post-step
           <<: *multisite_acceptance_config
@@ -812,12 +777,7 @@ workflows:
             - build
             - acceptance_tests_base_and_woo_cot_off
             - js_tests
-            - integration_test_base
-            - integration_test_woo_cot_no_sync
             - integration_test_woo_cot_off
-            - integration_test_woo_cot_sync
-            - acceptance_tests_woo_cot_sync
-            - acceptance_tests_woo_cot_no_sync
             - performance_tests
 
   nightly:
