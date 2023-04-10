@@ -388,8 +388,7 @@ class Hooks {
     $this->wp->addAction(
       'woocommerce_new_order',
       [$this->hooksWooCommerce, 'updateSubscriberEngagement'],
-      7,
-      2
+      7
     );
   }
 

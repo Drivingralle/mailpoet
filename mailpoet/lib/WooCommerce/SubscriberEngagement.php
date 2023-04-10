@@ -8,16 +8,22 @@ use WC_Order;
 
 class SubscriberEngagement {
 
+  /** @var Helper */
+  private $woocommerceHelper;
+
   /** @var SubscribersRepository */
   private $subscribersRepository;
 
   public function __construct(
+    Helper $woocommerceHelper,
     SubscribersRepository $subscribersRepository
   ) {
+    $this->woocommerceHelper = $woocommerceHelper;
     $this->subscribersRepository = $subscribersRepository;
   }
 
-  public function updateSubscriberEngagement($order): void {
+  public function updateSubscriberEngagement($orderId): void {
+    $order = $this->woocommerceHelper->wcGetOrder($orderId);
     if (!$order instanceof WC_Order) {
       return;
     }

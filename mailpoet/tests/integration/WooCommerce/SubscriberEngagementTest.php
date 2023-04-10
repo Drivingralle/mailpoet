@@ -28,6 +28,7 @@ class SubscriberEngagementTest extends \MailPoetTest {
     $this->wooCommerceHelperMock = $this->createMock(Helper::class);
     $this->wpMock = $this->createMock(WPFunctions::class);
     $this->subscriberEngagement = new SubscriberEngagement(
+      $this->wooCommerceHelperMock,
       new SubscribersRepository($this->entityManager, new SubscriberChangesNotifier($this->wpMock), $this->wpMock)
     );
   }
@@ -39,7 +40,11 @@ class SubscriberEngagementTest extends \MailPoetTest {
       ->willReturn($now->getTimestamp());
     $subscriber = $this->createSubscriber();
     $order = $this->createOrderMock($subscriber->getEmail());
-    $this->subscriberEngagement->updateSubscriberEngagement($order);
+    $this->wooCommerceHelperMock
+      ->expects($this->once())
+      ->method('wcGetOrder')
+      ->willReturn($order);
+    $this->subscriberEngagement->updateSubscriberEngagement(1);
     $this->entityManager->refresh($subscriber);
     expect($subscriber->getLastEngagementAt())->equals($now);
   }
@@ -61,7 +66,7 @@ class SubscriberEngagementTest extends \MailPoetTest {
       ->expects($this->once())
       ->method('wcGetOrder')
       ->willReturn($order);
-    $this->subscriberEngagement->updateSubscriberEngagement($order);
+    $this->subscriberEngagement->updateSubscriberEngagement(1);
   }
 
   private function createOrderMock($email) {

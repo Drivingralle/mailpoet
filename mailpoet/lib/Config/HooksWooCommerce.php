@@ -134,9 +134,9 @@ class HooksWooCommerce {
     return $errors;
   }
 
-  public function updateSubscriberEngagement($orderId, $order) {
+  public function updateSubscriberEngagement($orderId) {
     try {
-      $this->subscriberEngagement->updateSubscriberEngagement($order);
+      $this->subscriberEngagement->updateSubscriberEngagement($orderId);
     } catch (\Throwable $e) {
       $this->logError($e, 'WooCommerce Update Subscriber Engagement');
     }
