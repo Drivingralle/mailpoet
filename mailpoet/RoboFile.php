@@ -1271,7 +1271,7 @@ class RoboFile extends \Robo\Tasks {
 
   public function downloadWooCommerceZip($tag = null) {
     $this->createWpOrgDownloader('woocommerce')
-    ->downloadPluginZip('woocommerce.zip', __DIR__ . '/tests/plugins/', '7.6.0-rc.2');
+    ->downloadPluginZip('woocommerce.zip', __DIR__ . '/tests/plugins/', '7.6.0-rc.3');
   }
 
   public function generateData($generatorName = null, $threads = 1) {
