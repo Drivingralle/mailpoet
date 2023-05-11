@@ -5,6 +5,7 @@ namespace MailPoet\Automation\Integrations\MailPoet;
 use MailPoet\Automation\Engine\Integration;
 use MailPoet\Automation\Engine\Registry;
 use MailPoet\Automation\Integrations\MailPoet\Actions\SendEmailAction;
+use MailPoet\Automation\Integrations\MailPoet\Analytics\RegisterAnalytics;
 use MailPoet\Automation\Integrations\MailPoet\Hooks\AutomationEditorLoadingHooks;
 use MailPoet\Automation\Integrations\MailPoet\Hooks\CreateAutomationRunHook;
 use MailPoet\Automation\Integrations\MailPoet\Subjects\SegmentSubject;
@@ -45,6 +46,9 @@ class MailPoetIntegration implements Integration {
   /** @var OrderSubjectToSegmentSubjectTransformer */
   private $orderToSegmentTransformer;
 
+  /** @var RegisterAnalytics */
+  private $registerAnalytics;
+
   public function __construct(
     ContextFactory $contextFactory,
     SegmentSubject $segmentSubject,
@@ -55,7 +59,8 @@ class MailPoetIntegration implements Integration {
     UserRegistrationTrigger $userRegistrationTrigger,
     SendEmailAction $sendEmailAction,
     AutomationEditorLoadingHooks $automationEditorLoadingHooks,
-    CreateAutomationRunHook $createAutomationRunHook
+    CreateAutomationRunHook $createAutomationRunHook,
+    RegisterAnalytics $registerAnalytics
   ) {
     $this->contextFactory = $contextFactory;
     $this->segmentSubject = $segmentSubject;
@@ -67,6 +72,7 @@ class MailPoetIntegration implements Integration {
     $this->sendEmailAction = $sendEmailAction;
     $this->automationEditorLoadingHooks = $automationEditorLoadingHooks;
     $this->createAutomationRunHook = $createAutomationRunHook;
+    $this->registerAnalytics = $registerAnalytics;
   }
 
   public function register(Registry $registry): void {
@@ -90,5 +96,7 @@ class MailPoetIntegration implements Integration {
 
     $this->automationEditorLoadingHooks->init();
     $this->createAutomationRunHook->init();
+
+    $this->registerAnalytics->register();
   }
 }
