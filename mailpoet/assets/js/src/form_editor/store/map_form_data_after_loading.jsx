@@ -45,6 +45,25 @@ export function mapFormDataAfterLoading(data) {
               ? data.settings.form_placement?.popup?.pages?.selected
               : [],
           },
+          homepage: data.settings.form_placement?.popup?.homepage === '1',
+          tagArchives: {
+            all: data.settings.form_placement?.popup?.tagArchives?.all === '1',
+            selected: Array.isArray(
+              data.settings.form_placement?.popup?.tagArchives?.selected,
+            )
+              ? data.settings.form_placement?.popup?.tagArchives?.selected
+              : [],
+          },
+          categoryArchives: {
+            all:
+              data.settings.form_placement?.popup?.categoryArchives?.all ===
+              '1',
+            selected: Array.isArray(
+              data.settings.form_placement?.popup?.categoryArchives?.selected,
+            )
+              ? data.settings.form_placement?.popup?.categoryArchives?.selected
+              : [],
+          },
         },
         fixedBar: {
           enabled: data.settings.form_placement?.fixed_bar?.enabled === '1',
@@ -85,6 +104,28 @@ export function mapFormDataAfterLoading(data) {
               ? data.settings.form_placement?.fixed_bar?.pages?.selected
               : [],
           },
+          homepage: data.settings.form_placement?.fixed_bar?.homepage === '1',
+          tagArchives: {
+            all:
+              data.settings.form_placement?.fixed_bar?.tagArchives?.all === '1',
+            selected: Array.isArray(
+              data.settings.form_placement?.fixed_bar?.tagArchives?.selected,
+            )
+              ? data.settings.form_placement?.fixed_bar?.tagArchives?.selected
+              : [],
+          },
+          categoryArchives: {
+            all:
+              data.settings.form_placement?.fixed_bar?.categoryArchives?.all ===
+              '1',
+            selected: Array.isArray(
+              data.settings.form_placement?.fixed_bar?.categoryArchives
+                ?.selected,
+            )
+              ? data.settings.form_placement?.fixed_bar?.categoryArchives
+                  ?.selected
+              : [],
+          },
         },
         belowPosts: {
           enabled: data.settings.form_placement?.below_posts?.enabled === '1',
@@ -111,6 +152,7 @@ export function mapFormDataAfterLoading(data) {
               ? data.settings.form_placement?.below_posts?.pages?.selected
               : [],
           },
+          homepage: data.settings.form_placement?.below_posts?.homepage === '1',
         },
         slideIn: {
           enabled: data.settings.form_placement?.slide_in?.enabled === '1',
@@ -149,6 +191,28 @@ export function mapFormDataAfterLoading(data) {
               data.settings.form_placement?.slide_in?.pages?.selected,
             )
               ? data.settings.form_placement?.slide_in?.pages?.selected
+              : [],
+          },
+          homepage: data.settings.form_placement?.slide_in?.homepage === '1',
+          tagArchives: {
+            all:
+              data.settings.form_placement?.slide_in?.tagArchives?.all === '1',
+            selected: Array.isArray(
+              data.settings.form_placement?.slide_in?.tagArchives?.selected,
+            )
+              ? data.settings.form_placement?.slide_in?.tagArchives?.selected
+              : [],
+          },
+          categoryArchives: {
+            all:
+              data.settings.form_placement?.slide_in?.categoryArchives?.all ===
+              '1',
+            selected: Array.isArray(
+              data.settings.form_placement?.slide_in?.categoryArchives
+                ?.selected,
+            )
+              ? data.settings.form_placement?.slide_in?.categoryArchives
+                  ?.selected
               : [],
           },
         },
