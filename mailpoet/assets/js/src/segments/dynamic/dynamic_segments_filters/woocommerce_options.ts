@@ -12,6 +12,7 @@ export enum WooCommerceActionTypes {
   CUSTOMER_IN_COUNTRY = 'customerInCountry',
   SINGLE_ORDER_VALUE = 'singleOrderValue',
   USED_PAYMENT_METHOD = 'usedPaymentMethod',
+  USED_SHIPPING_METHOD = 'usedShippingMethod',
 }
 
 export const WooCommerceOptions = [
@@ -58,6 +59,11 @@ export const WooCommerceOptions = [
   {
     value: WooCommerceActionTypes.USED_PAYMENT_METHOD,
     label: MailPoet.I18n.t('wooUsedPaymentMethod'),
+    group: SegmentTypes.WooCommerce,
+  },
+  {
+    value: WooCommerceActionTypes.USED_SHIPPING_METHOD,
+    label: MailPoet.I18n.t('wooUsedShippingMethod'),
     group: SegmentTypes.WooCommerce,
   },
 ];
