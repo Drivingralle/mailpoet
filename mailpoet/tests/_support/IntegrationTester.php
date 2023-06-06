@@ -112,6 +112,18 @@ class IntegrationTester extends \Codeception\Actor {
     $helper = ContainerWrapper::getInstance()->get(Helper::class);
     $order = $helper->wcCreateOrder($data);
 
+    if (isset($data['status'])) {
+      $order->set_status($data['status']);
+    }
+
+    if (isset($data['customer_id'])) {
+      $order->set_customer_id($data['customer_id']);
+    }
+
+    if (isset($data['date_created'])) {
+      $order->set_date_created($data['date_created']);
+    }
+
     if (isset($data['date_created'])) {
       $order->set_date_created($data['date_created']);
     }
