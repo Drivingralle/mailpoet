@@ -295,5 +295,6 @@ export type WooPaymentMethod = {
 };
 
 export type WooShippingMethod = {
+  id: string;
   name: string;
 };

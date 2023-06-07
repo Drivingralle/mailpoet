@@ -746,7 +746,7 @@ function UsedShippingMethodFields({ filterIndex }: Props): JSX.Element {
     [],
   );
   const shippingMethodOptions = shippingMethods.map((method) => ({
-    value: method.name,
+    value: method.id,
     label: method.name,
   }));
 
